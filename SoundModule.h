@@ -33,7 +33,7 @@ public:
 
 	virtual ~SoundModule(){};
 
-	virtual void begin() = 0;
+//	virtual void begin() = 0;
 
 	virtual void update() = 0;
 	virtual void updateTick() = 0;

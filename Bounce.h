@@ -23,8 +23,8 @@
  */
 
 
-#ifndef SOUNDPAD_H
-#define SOUNDPAD_H
+#ifndef SOUNDBOUNCE_H
+#define SOUNDBOUNCE_H
 
 #include <SoundNote.h>
 #include <soundmachine.h>
@@ -33,13 +33,13 @@
 #include "SoundModule.h"
 #include <Arduino.h>
 
-class Pad : public SoundModule{
+class Bounce : public SoundModule{
 public:
 
-	Pad();
+	Bounce();
 	
 	//Virtuals methods inherited from SoundModule.
-	~Pad();
+	~Bounce();
 
 	void begin(SoundMachine* synth, TrellisMap* trellis, SoundNotes* notes);
 
@@ -50,11 +50,20 @@ public:
 	//Methods of the class
 
 protected:
+
+	int _getKey(byte x, byte y);
+
 	SoundMachine* _synth;
 	TrellisMap* _trellis;
 	SoundNotes* _notes;
 
-	int _numKeys;
+	int _size;
+	byte _channels;
+	byte _rows;
+
+	byte _tick;
+
+	char *active, *direction, *pos, *top, *play;
 
 };
 

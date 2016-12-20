@@ -19,18 +19,47 @@
 #include "Pad.h"
 
 Pad::Pad(){
-
+	_synth = NULL;
+	_trellis = NULL;
+	_notes = NULL;
 }
 
 Pad::~Pad(){
-	
+
 }
 
-void Pad::begin(){
+void Pad::begin(SoundMachine* synth, TrellisMap* trellis, SoundNotes* notes){
+	_synth = synth;
+	_trellis = trellis;
+	_notes = notes;
 
+	_numKeys = _trellis->getSize();
 }
 
 void Pad::update(){
+	bool update = _trellis->readSwitches();
+	if(!update){
+		return;
+	}
+
+	for(int i = 0; i < _numKeys; i++){
+		if(_trellis->justPressed(i)){
+			_trellis->setLED(i);
+			SoundNote *note = _notes->getNote(i);
+
+			_synth->play(note->getWave(),
+						note->getPitch(),
+						note->getEnv(),
+						note->getVelocity());
+		}
+
+		if(_trellis->justReleased(i)){
+			_trellis->clrLED(i);
+		}
+	}
+
+	_trellis->writeDisplay();
+
 
 }
 
