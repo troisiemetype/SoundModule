@@ -33,10 +33,14 @@ public:
 
 	virtual ~SoundModule(){};
 
+	//As different things should be done with begin, it's only defined, if needed, in inherited classes.
 //	virtual void begin() = 0;
 
+	//update() is to  be called when you want, preferably as often as posible, i.e. in main loop.
 	virtual void update() = 0;
+	//updateTick() is to be called on a tick "event" (in the MIDI way, 24 per quarter).
 	virtual void updateTick() = 0;
+	//updateBeat() is to be called on a beat "event"
 	virtual void updateBeat() = 0;
 
 protected:

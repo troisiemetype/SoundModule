@@ -17,14 +17,17 @@
  */
 
 /*
- * This class defines a simple pad.
+ * This class defines a simple step sequancer.
+ * Each row represents a channel with a sound or note attached to it.
+ * A vertical bar moves left to right, each column being a step.
+ * When the step bar moves, it triggers every channel that is set for this step.
  * Begin is used to init the class. It's to be used in setup, or in any place you want.
  * You will then be able to access it if needed via a SoundModule pointer.
  */
 
 
-#ifndef SOUNDPAD_H
-#define SOUNDPAD_H
+#ifndef SOUNDSTEP_H
+#define SOUNDSTEP_H
 
 #include <SoundNote.h>
 #include <soundmachine.h>
@@ -33,13 +36,13 @@
 #include "SoundModule.h"
 #include <Arduino.h>
 
-class Pad : public SoundModule{
+class Step : public SoundModule{
 public:
 
-	Pad();
+	Step();
 	
 	//Virtuals methods inherited from SoundModule.
-	~Pad();
+	~Step();
 
 	void begin(SoundMachine* synth, TrellisMap* trellis, SoundNotes* notes);
 
@@ -47,16 +50,30 @@ public:
 	void updateTick();
 	void updateBeat();
 
+	void menuSteps();
+
 	//Methods of the class
 
 protected:
+
+	void _setVert(byte col);
+	void _setBar(byte col);
+	int _getKey(byte x, byte y);
+
+
 	SoundMachine* _synth;
 	TrellisMap* _trellis;
 	SoundNotes* _notes;
 
-	int _numKeys;
-	byte _rows, _cols;
+	int _size;
+	byte _channels;
+	byte _cols;
+	byte _rows;
+
+	byte _currentChannel;
+
+	byte _currentStep;
+	byte _steps;
 
 };
-
 #endif

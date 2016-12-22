@@ -34,6 +34,8 @@ void Pad::begin(SoundMachine* synth, TrellisMap* trellis, SoundNotes* notes){
 	_notes = notes;
 
 	_numKeys = _trellis->getSize();
+	_cols = _trellis->getSizeX();
+	_rows = _trellis->getSizeY();
 }
 
 void Pad::update(){
@@ -44,8 +46,12 @@ void Pad::update(){
 
 	for(int i = 0; i < _numKeys; i++){
 		if(_trellis->justPressed(i)){
+			byte row = i/_cols;
+			byte col = i%_cols;
+
 			_trellis->setLED(i);
-			SoundNote *note = _notes->getNote(i);
+
+			SoundNote *note = _notes->getNote(col + ((_rows - 1 - row) * _cols));
 
 			_synth->play(note->getWave(),
 						note->getPitch(),

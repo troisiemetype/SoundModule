@@ -17,7 +17,10 @@
  */
 
 /*
- * This class defines a simple pad.
+ * This class defines a bounce program.
+ * When a key is pressed, the led start going up and down between key pressed and pannel bottom.
+ * When it somes to bottom, the sound or note associated to the channel is played.
+ * Simply press again the same key to stop the bouncing.
  * Begin is used to init the class. It's to be used in setup, or in any place you want.
  * You will then be able to access it if needed via a SoundModule pointer.
  */
@@ -63,7 +66,7 @@ protected:
 
 	byte _tick;
 
-	char *active, *direction, *pos, *top, *play;
+	char *_active, *_direction, *_pos, *_top, *_play;
 
 };
 

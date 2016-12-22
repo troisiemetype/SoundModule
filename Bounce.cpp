@@ -25,11 +25,11 @@ Bounce::Bounce(){
 }
 
 Bounce::~Bounce(){
-	delete active;
-	delete direction;
-	delete pos;
-	delete top;
-	delete play;
+	delete _active;
+	delete _direction;
+	delete _pos;
+	delete _top;
+	delete _play;
 }
 
 void Bounce::begin(SoundMachine* synth, TrellisMap* trellis, SoundNotes* notes){
@@ -43,17 +43,17 @@ void Bounce::begin(SoundMachine* synth, TrellisMap* trellis, SoundNotes* notes){
 	_rows = _trellis->getSizeY();
 	_size = _trellis->getSize();
 
-	active = new char[_channels];
-	direction = new char[_channels];
-	pos = new char[_channels];
-	top = new char[_channels];
-	play = new char[_channels];
+	_active = new char[_channels];
+	_direction = new char[_channels];
+	_pos = new char[_channels];
+	_top = new char[_channels];
+	_play = new char[_channels];
 
-	memset(active, 0, _channels);
-	memset(direction, 0, _channels);
-	memset(pos, 0, _channels);
-	memset(top, 0, _channels);
-	memset(play, 0, _channels);
+	memset(_active, 0, _channels);
+	memset(_direction, 0, _channels);
+	memset(_pos, 0, _channels);
+	memset(_top, 0, _channels);
+	memset(_play, 0, _channels);
 
 
 }
@@ -65,7 +65,28 @@ void Bounce::update(){
 		return;
 	}
 
-	//Get the button pressed.
+	//First get the button pressed for offset
+	if(_trellis->justTPressed(TRELLIS_U1) && _trellis->justTPressed(TRELLIS_U2)){
+		_trellis->setOffsetY(-4);
+		return;
+	}
+
+	if(_trellis->justTPressed(TRELLIS_L1) && _trellis->justTPressed(TRELLIS_L2)){
+		_trellis->setOffsetX(-4);
+		return;
+	}
+
+	if(_trellis->justTPressed(TRELLIS_D1) && _trellis->justTPressed(TRELLIS_D2)){
+		_trellis->setOffsetY(4);
+		return;
+	}
+
+	if(_trellis->justTPressed(TRELLIS_R1) && _trellis->justTPressed(TRELLIS_R2)){
+		_trellis->setOffsetX(4);
+		return;
+	}
+
+	//Get the button pressed for note setting
 	for (byte i = 0; i < _size; i++){
 		if(_trellis->justPressed(i)){
 
@@ -73,16 +94,16 @@ void Bounce::update(){
 			byte row = i/_channels;
 
 			//If the button was already press for this channel, we have to shut it.
-			if(top[col] == row){
-				active[col] = 0;
-				top[col] = -1;
+			if(_top[col] == row){
+				_active[col] = 0;
+				_top[col] = -1;
 			//Else the column is initialize with the new value.
 			} else {
-				top[col] = row;
-				active[col] = 1;
-				direction[col] = -1;
-				play[col] = 1;
-				pos[col] = _rows;
+				_top[col] = row;
+				_active[col] = 1;
+				_direction[col] = -1;
+				_play[col] = 1;
+				_pos[col] = _rows;
 
 			}
 
@@ -101,34 +122,34 @@ void Bounce::updateBeat(){
 	for(byte i = 0; i < _channels; i++){
 		//If the channel is not set, change channel
 
-		if(active[i] == 0){
+		if(_active[i] == 0){
 			continue;
 		}
 
 		//If pos = _rows, the note has to be played, and direction reversed.
-		if(pos[i] >= _rows - 1){
-			play[i] = 1;
-			direction[i] = -1;
-			pos[i] = _rows -1;
+		if(_pos[i] >= _rows - 1){
+			_play[i] = 1;
+			_direction[i] = -1;
+			_pos[i] = _rows -1;
 		}
 		//If pos = top, the direction has to be reversed too.
-		if(pos[i] == top[i]){
-			direction[i] = 1;
+		if(_pos[i] == _top[i]){
+			_direction[i] = 1;
 		}
 
-		_trellis->setLED(_getKey(i, pos[i]));
-		_trellis->setLED(_getKey(i, top[i]));
+		_trellis->setLED(_getKey(i, _pos[i]));
+		_trellis->setLED(_getKey(i, _top[i]));
 
-		pos[i] += direction[i];
+		_pos[i] += _direction[i];
 	}
 
 	_trellis->writeDisplay();
 
 	for(byte i = 0; i < _channels; i++){
-		if(play[i] != 1){
+		if(_play[i] != 1){
 			continue;
 		}
-		play[i] = 0;
+		_play[i] = 0;
 		SoundNote *note = _notes->getNote(i);
 
 		_synth->play(note->getWave(),
